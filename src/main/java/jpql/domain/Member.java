@@ -3,6 +3,8 @@ package jpql.domain;
 import jdk.jfr.Enabled;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member {
@@ -15,13 +17,8 @@ public class Member {
 
     private int age;
 
-    public MemberType getMemberType() {
-        return memberType;
-    }
-
-    public void setMemberType(MemberType memberType) {
-        this.memberType = memberType;
-    }
+    @OneToMany(mappedBy ="member")
+    private List<Order> orders=new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private MemberType memberType;
@@ -29,6 +26,14 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
+
+    public MemberType getMemberType() {
+        return memberType;
+    }
+
+    public void setMemberType(MemberType memberType) {
+        this.memberType = memberType;
+    }
 
     public void changeTeam(Team team){
         setTeam(team);

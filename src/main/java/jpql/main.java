@@ -17,87 +17,57 @@ public class main {
         EntityTransaction tx=em.getTransaction();
         tx.begin();
         try{
+/*
 
-            /*for(int i=0;i<100;i++){
-                Member member = new Member();
-                member.setUsername("member"+i);
-                member.setAge(i);
-                em.persist(member);
-            }*/
+            em.createQuery("select m.username from Member m").getResultList();
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            em.createQuery("select m.team from Member m").getResultList();
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            member.setTeam(team);
-            em.persist(member);
+            em.createQuery("select m.username from Team t join t.members m").getResultList();
 
-            Team team2 = new Team();
-            team2.setName("aeamA");
-            em.persist(team2);
+
+
+            //fetch 조인
+
+            //회원과 팀을 한번에 조인
+            em.createQuery("select m from Member m join fetch m.team t",Member.class).getResultList()   ;
+*/
+
+            //회원 테스트
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            Team teamB = new Team();
+            teamB.setName("teamB");
+
+            em.persist(teamA);
+            em.persist(teamB);
+
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setTeam(teamA);
 
             Member member2 = new Member();
             member2.setUsername("member2");
-            member2.setAge(10);
-            member2.setTeam(team2);
-            member2.setMemberType(MemberType.USER);
-            em.persist(member2);
+            member2.setTeam(teamA);
 
+            Member member3 = new Member();
+            member3.setUsername("member3");
+            member3.setTeam(teamB);
+
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            /*String sql=
-                    "select "+
-                            "case when m.age<=10 then '학생요금' "+
-                            " when m.age>=60 then '경로요금' "+
-                            "else '일반요금' "+
-                            "end from Member m";*/
+            String sql="select m from Member m join fetch m.team";
+            String membersSql="select t from Team t join fetch t.members m";
+            String distinctSql="select distinct t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(distinctSql, Team.class).getResultList();
 
-            //String sql="select coalesce(m.username,'이름없는 회원') from Member m ";
-            String sql="select nullif(m.username,'관리자') from Member m ";
+            System.out.println("result.size() = " + result.size());
 
-            List<String> result = em.createQuery(sql, String.class).getResultList();
-
-
-            //String sql="select m from Member m inner join m.team t";
-            //String sql="select m from Member m where m.memberType='USER'";
-
-            //String sql ="select i from Item i where type(i)=Book";
-
-            //String sql = "select m from Member m where m.username is not null";
-
-            //String sql = "select m from Member m where m.age between 0 and 10";
-
-            //List<Member> members = em.createQuery(sql, Member.class).getResultList();
-
-            //System.out.println("members.size() = " + members.size());
-
-            /*List<Member> members = em.createQuery("select m from Member m", Member.class)
-                    .setFirstResult(1)
-                    .setMaxResults(10)
-                    .getResultList();
-
-            for (Member member : members) {
-                System.out.println("member = " + member);
-            }*/
-
-
-            /*TypedQuery<Member> result1 = em.createQuery("select m from Member m", Member.class);
-
-            List<Team> result2 = em.createQuery("select m.team from Member m", Team.class).getResultList();
-
-            List<Team> result3 = em.createQuery("select t from Member m join m.team t", Team.class).getResultList();
-
-            List<Address> result4 = em.createQuery("select o.address from Order o", Address.class).getResultList();
-
-            List result5 = em.createQuery("select m.username,m.age from Member m").getResultList();
-
-            List<MemberDto> result6 = em.createQuery("select new jpql.dto.MemberDto(m.username,m.age) from Member m", MemberDto.class).getResultList();
-*/
             tx.commit();
         }catch (Exception e){
             e.printStackTrace();
