@@ -68,6 +68,17 @@ public class main {
 
             System.out.println("result.size() = " + result.size());
 
+
+            em.createQuery("select m from Member m where m=:member")
+                            .setParameter("member",member1);
+
+            em.createNamedQuery("Member.findByUsername",Member.class)
+                    .setParameter("username",member1.getUsername())
+                            .getResultList();
+
+
+            em.createQuery("update Member m set m.age=20").executeUpdate();
+
             tx.commit();
         }catch (Exception e){
             e.printStackTrace();

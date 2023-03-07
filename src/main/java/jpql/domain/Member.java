@@ -1,12 +1,17 @@
 package jpql.domain;
 
 import jdk.jfr.Enabled;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "select m from Member m where m.username=:username"
+)
 public class Member {
     @Id
     @GeneratedValue
@@ -22,6 +27,8 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private MemberType memberType;
+
+    @BatchSize(size = 100)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
